@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="SmartOffice.Api/SmartOffice.Api.csproj" />
+  <Project Path="SmartOffice.TelegramBot/SmartOffice.TelegramBot.csproj" Id="ff316c9b-d8c6-462c-950c-270af513ae15" />
+  <Project Path="SmartOffice.Web/SmartOffice.Web.csproj" Id="5e70ee12-1b45-496a-8d9f-72ac971ed4c8" />
+</Solution>
