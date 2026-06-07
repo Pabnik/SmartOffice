@@ -1,24 +1,24 @@
 ﻿@model SmartOffice.Web.Models.DashboardViewModel
 
 @{
-    ViewData["Title"] = "Analytics Dashboard";
+    ViewData["Title"] = "Аналітична панель";
 }
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">📊 System Analytics</h1>
+        <h1 class="mb-0">📊 Аналітика системи</h1>
         
         <form method="get" asp-action="Dashboard" class="d-flex align-items-center">
-            <label class="me-2 fw-bold text-muted text-nowrap">Filter by Period:</label>
+            <label class="me-2 fw-bold text-muted text-nowrap">Фільтр за періодом:</label>
             <select name="period" class="form-select w-auto shadow-sm border-primary" onchange="this.form.submit()">
                 
                 @if (Model.SelectedPeriod == "all" || string.IsNullOrEmpty(Model.SelectedPeriod)) 
                 { 
-                    <option value="all" selected>All Time</option> 
+                    <option value="all" selected>За весь час</option> 
                 } 
                 else 
                 { 
-                    <option value="all">All Time</option> 
+                    <option value="all">За весь час</option> 
                 }
 
                 @if (Model.AvailablePeriods != null)
@@ -26,7 +26,8 @@
                     foreach (var p in Model.AvailablePeriods)
                     {
                         var parsedDate = DateTime.Parse(p + "-01");
-                        var displayMonth = parsedDate.ToString("MMMM yyyy", new System.Globalization.CultureInfo("en-US"));
+                        // Змінено на uk-UA для відображення місяців українською
+                        var displayMonth = parsedDate.ToString("MMMM yyyy", new System.Globalization.CultureInfo("uk-UA"));
 
                         if (Model.SelectedPeriod == p)
                         {
@@ -46,7 +47,7 @@
         <div class="col-md-3">
             <div class="card bg-primary text-white shadow-sm h-100">
                 <div class="card-body">
-                    <h6>Total Bookings</h6>
+                    <h6>Всього бронювань</h6>
                     <h2 class="mb-0">@Model.TotalCount</h2>
                 </div>
             </div>
@@ -54,7 +55,7 @@
         <div class="col-md-3">
             <div class="card bg-success text-white shadow-sm h-100">
                 <div class="card-body">
-                    <h6>Utilization Rate</h6>
+                    <h6>Коефіцієнт утилізації</h6>
                     <h2 class="mb-0">@Model.UtilizationRate%</h2>
                 </div>
             </div>
@@ -62,15 +63,15 @@
         <div class="col-md-3" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" data-bs-toggle="modal" data-bs-target="#savedHoursModal">
             <div class="card text-white bg-danger mb-3 shadow-sm h-100">
                 <div class="card-body">
-                    <h6 class="card-title">Hours Saved <span style="font-size: 0.8em; opacity: 0.8;">(Click)</span></h6>
-                    <h2 class="display-6 mb-0">@Model.HoursSaved h</h2>
+                    <h6 class="card-title">Заощаджено годин <span style="font-size: 0.8em; opacity: 0.8;">(Натисніть)</span></h6>
+                    <h2 class="display-6 mb-0">@Model.HoursSaved год</h2>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card bg-info text-white shadow-sm h-100">
                 <div class="card-body">
-                    <h6>Currently Active</h6>
+                    <h6>Зараз активні</h6>
                     <h2 class="mb-0">@Model.ActiveCount</h2>
                 </div>
             </div>
@@ -80,7 +81,7 @@
     <div class="row mb-4">
         <div class="col-md-6">
             <div class="card shadow-sm h-100">
-                <div class="card-header bg-white fw-bold">Booking Status Distribution</div>
+                <div class="card-header bg-white fw-bold">Розподіл статусів бронювань</div>
                 <div class="card-body" style="position: relative; height: 300px;">
                     <canvas id="statusChart"></canvas>
                 </div>
@@ -89,34 +90,34 @@
         
         <div class="col-md-6">
             <div class="card shadow-sm p-4 h-100 border-success">
-                <h5 class="text-success fw-bold"><i class="bi bi-lightning-charge-fill"></i> Business Impact</h5>
-                <p class="text-muted small">Financial and operational metrics driven by the Smart Auto-Cancellation system.</p>
+                <h5 class="text-success fw-bold"><i class="bi bi-lightning-charge-fill"></i> Економічний ефект</h5>
+                <p class="text-muted small">Фінансові та операційні метрики, забезпечені системою розумного автоскасування.</p>
                 <hr>
                 
                 <div class="row mb-3">
                     <div class="col-6">
-                        <span class="text-muted d-block">Total Hours Booked</span>
-                        <strong class="fs-4">@Model.TotalHoursBooked h</strong>
+                        <span class="text-muted d-block">Всього заброньовано</span>
+                        <strong class="fs-4">@Model.TotalHoursBooked год</strong>
                     </div>
                     <div class="col-6">
-                        <span class="text-muted d-block">Actual Hours Used</span>
-                        <strong class="fs-4 text-success">@Model.ActualHoursUsed h</strong>
+                        <span class="text-muted d-block">Фактично використано</span>
+                        <strong class="fs-4 text-success">@Model.ActualHoursUsed год</strong>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-6">
-                        <span class="text-muted d-block">No-Show Rate</span>
+                        <span class="text-muted d-block">Відсоток неявок (No-Show)</span>
                         <strong class="fs-4 text-danger">@Model.NoShowRate%</strong>
                     </div>
                     <div class="col-6">
-                        <span class="text-muted d-block">Energy Saved</span>
-                        <strong class="fs-4 text-warning">@Model.EnergySavedKwh kWh</strong>
+                        <span class="text-muted d-block">Заощаджено енергії</span>
+                        <strong class="fs-4 text-warning">@Model.EnergySavedKwh кВт-год</strong>
                     </div>
                 </div>
 
                 <div class="alert alert-success mb-0 py-2">
-                    <small>💡 The system prevented <strong>@Model.EnergySavedKwh kWh</strong> of energy waste by turning off equipment at abandoned desks.</small>
+                    <small>💡 Система зекономила <strong>@Model.EnergySavedKwh кВт-год</strong> енергії завдяки вимкненню обладнання на покинутих робочих місцях.</small>
                 </div>
             </div>
         </div>
@@ -125,7 +126,7 @@
     <div class="row mb-4">
         <div class="col-md-4">
             <div class="card shadow-sm h-100">
-                <div class="card-header bg-white fw-bold">🔥 Top 5 Workspaces</div>
+                <div class="card-header bg-white fw-bold">🔥 Топ 5 робочих місць</div>
                 <div class="card-body" style="position: relative; height: 250px;">
                     <canvas id="topWorkspacesChart"></canvas>
                 </div>
@@ -133,7 +134,7 @@
         </div>
         <div class="col-md-4">
             <div class="card shadow-sm h-100">
-                <div class="card-header bg-white fw-bold">📈 Peak Hours (Load)</div>
+                <div class="card-header bg-white fw-bold">📈 Пікові години (Навантаження)</div>
                 <div class="card-body" style="position: relative; height: 250px;">
                     <canvas id="peakHoursChart"></canvas>
                 </div>
@@ -141,7 +142,7 @@
         </div>
         <div class="col-md-4">
             <div class="card shadow-sm h-100">
-                <div class="card-header bg-white fw-bold">📅 7-Day Utilization Trend</div>
+                <div class="card-header bg-white fw-bold">📅 Тренд утилізації за 7 днів</div>
                 <div class="card-body" style="position: relative; height: 250px;">
                     <canvas id="trendChart"></canvas>
                 </div>
@@ -149,11 +150,12 @@
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="savedHoursModal" tabindex="-1" aria-labelledby="savedHoursModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="savedHoursModalLabel">📈 Saved Hours (Daily Trend)</h5>
+                <h5 class="modal-title" id="savedHoursModalLabel">📈 Заощаджені години (Денний тренд)</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -162,6 +164,7 @@
         </div>
     </div>
 </div>
+
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
@@ -176,7 +179,7 @@
         new Chart(document.getElementById('statusChart').getContext('2d'), {
         type: 'doughnut',
         data: {
-        labels: ['Checked In', 'Cancelled by User', 'Auto-Cancelled', 'Active'],
+        labels: ['Підтверджено', 'Скасовано користувачем', 'Авто-скасовано', 'Активно'],
         datasets: [{
         data: [@Model.CheckedInCount, @Model.CancelledByUserCount, @Model.AutoCancelledCount, @Model.ActiveCount],
         backgroundColor: ['#198754', '#ffc107', '#dc3545', '#0dcaf0'],
@@ -213,7 +216,7 @@
         data: {
         labels: topData.map(d => d.Name),
         datasets: [{
-        label: 'Bookings',
+        label: 'Бронювання',
         data: topData.map(d => d.Count),
         backgroundColor: '#0d6efd',
         borderRadius: 4
@@ -234,7 +237,7 @@
         data: {
         labels: peakData.map(d => d.Hour),
         datasets: [{
-        label: 'Active Bookings',
+        label: 'Активні бронювання',
         data: peakData.map(d => d.Count),
         borderColor: '#ffc107',
         tension: 0.3,
@@ -257,7 +260,7 @@
         data: {
         labels: trendData.map(d => d.Date),
         datasets: [{
-        label: 'Utilization %',
+        label: 'Утилізація %',
         data: trendData.map(d => d.Rate),
         borderColor: '#198754',
         backgroundColor: '#198754',
@@ -299,14 +302,15 @@
         data: {
         labels: savedHoursData.map(d => d.label || d.Label),
         datasets: [{
-        label: 'Hours Saved',
+        label: 'Заощаджено годин',
         data: savedHoursData.map(d => d.hours || d.Hours),
         backgroundColor: 'rgba(220, 53, 69, 0.8)',
-        borderColor: '#dc3545',
+        borderColor: '#dc8245',
         borderWidth: 1,
         borderRadius: 4
         }]
         },
+        plugins: [ChartDataLabels],
         options: {
         responsive: true,
         plugins: {
@@ -314,15 +318,30 @@
         tooltip: {
         callbacks: {
         label: function(context) {
-        return context.parsed.y + ' hours saved';
+        return context.parsed.y + ' годин заощаджено';
         }
+        }
+        },
+        datalabels: {
+        color: '#ffffff',
+        anchor: 'end',
+        align: 'bottom',
+        font: {
+        weight: 'bold',
+        size: 16
+        },
+        textStrokeColor: '#000000',
+        textStrokeWidth: 2,
+        formatter: function(value) {
+        return value > 0 ? value : '';
         }
         }
         },
         scales: {
         y: {
         beginAtZero: true,
-        title: { display: true, text: 'Hours' }
+        title: { display: true, text: 'Години' },
+        grace: '10%'
         }
         }
         }

@@ -247,7 +247,7 @@ namespace SmartOffice.Api.Controllers
 
 			var fakeNowUtc = DateTime.SpecifyKind(realNowLocal, DateTimeKind.Utc);
 
-			for (int day = -30; day <= 7; day++)
+			for (int day = -60; day <= 7; day++)
 			{
 				var dateLocal = realNowLocal.AddDays(day).Date;
 
